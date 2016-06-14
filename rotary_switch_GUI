@@ -1,0 +1,258 @@
+import sys
+import time
+import serial as s # calling serial s
+import numpy as np # calling numpy np
+from PyQt4.uic import loadUiType
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_qt4agg import (
+    FigureCanvasQTAgg as FigureCanvas)
+
+
+allowedCommands = ['S','R','0','1','2','3','4','5','6',
+                   '7','8','9',':',';','<','=','>','?',
+                   'a','b','c','d','e','f','g','h','i',
+                   'j','k','l','m','n','o','p','q','r','exit']
+
+times = np.linspace(0,87,87) # between 0 and 87, return 87 even spaced numbers
+
+ser = s.Serial(port='/dev/tty.usbserial',
+               baudrate=1200,
+               parity=s.PARITY_NONE,
+               stopbits=s.STOPBITS_ONE,
+               bytesize=s.EIGHTBITS,
+               writeTimeout=0.05
+               )
+
+ser.isOpen()
+
+print("connected to: " + ser.portstr)
+
+
+Ui_MainWindow, QMainWindow = loadUiType('set_reset.ui')
+
+class Main(QMainWindow, Ui_MainWindow):
+    def __init__(self, ):
+        # Create properties all def can access in this class
+        super(Main, self).__init__()
+        self.setupUi(self)
+        self.set_btn.clicked.connect(self.set_func)
+        self.reset_btn.clicked.connect(self.reset_func)
+        self.pick_switch.clicked.connect(self.switch_func) 
+        self.voltage_set.clicked.connect(self.volt_func)
+
+        self.fig1 = Figure()
+        self.ax1f1 = self.fig1.add_subplot(111)
+        self.ax1f1.set_xlabel('Time (ms)')
+        self.ax1f1.set_ylabel('Current (mA)')
+        self.ax1f1.set_title('Current Trace')
+
+        self.canvas = FigureCanvas(self.fig1)
+        self.Graph.addWidget(self.canvas) # QT widget veritcal layout named Graph (fits graph to layout)
+        self.canvas.draw()
+
+    def volt_func(self):
+        voltage = str(self.voltage_select.value())
+        if voltage == '0':
+            print(voltage)
+            ser.write('0'.encode())
+            time.sleep(1)
+        elif voltage == '1':
+            print(voltage)
+            ser.write('1'.encode())
+            time.sleep(1)
+        elif voltage == '2':
+            print(voltage)
+            ser.write('2'.encode())
+            time.sleep(1)
+        elif voltage == '3':
+            print(voltage)
+            ser.write('3'.encode())
+            time.sleep(1)                       
+        elif voltage == '4':
+            print(voltage)
+            ser.write('4'.encode())
+            time.sleep(1)
+        elif voltage == '5':
+            print(voltage)
+            ser.write('5'.encode())
+            time.sleep(1)
+        elif voltage == '6':
+            print(voltage)
+            ser.write('6'.encode())
+            time.sleep(1)
+        elif voltage == '7':
+            print(voltage)
+            ser.write('7'.encode())
+            time.sleep(1)
+        elif voltage == '8':
+            print(voltage)
+            ser.write('8'.encode())
+            time.sleep(1)
+        elif voltage == '9':
+            print(voltage)
+            ser.write('9'.encode())
+            time.sleep(1)
+        elif voltage == '10':
+            print(voltage)
+            ser.write(':'.encode())
+            time.sleep(1)
+        elif voltage == '11':
+            print(voltage)
+            ser.write(';'.encode())
+            time.sleep(1)
+        elif voltage == '12':
+            print(voltage)
+            ser.write('<'.encode())
+            time.sleep(1)
+        elif voltage == '13':
+            print(voltage)
+            ser.write('='.encode())
+            time.sleep(1)
+        elif voltage == '14':
+            print(voltage)
+            ser.write('>'.encode())
+            time.sleep(1)
+        elif voltage == '15':
+            print(voltage)
+            ser.write('?'.encode())
+            time.sleep(1)
+        else:
+            print('bad command')    
+
+
+    def switch_func(self):
+        value = str(self.relay_channel.value()) 
+        if value == '11':
+            print(value)
+            ser.write('a'.encode())
+            time.sleep(1)
+        elif value == '12':
+            print(value)
+            ser.write('b'.encode())
+            time.sleep(1)
+        elif value == '13':
+            print(value)
+            ser.write('c'.encode())
+            time.sleep(1)
+        elif value == '14':
+            print(value)
+            ser.write('d'.encode())
+            time.sleep(1)
+        elif value == '15':
+            print(value)
+            ser.write('e'.encode())
+            time.sleep(1)
+        elif value == '16':
+            print(value)
+            ser.write('f'.encode())
+            time.sleep(1)   
+        elif value == '21':
+            print(value)
+            ser.write('g'.encode())
+            time.sleep(1)
+        elif value == '22':
+            print(value)
+            ser.write('h'.encode())
+            time.sleep(1)
+        elif value == '23':
+            print(value)
+            ser.write('i'.encode())
+            time.sleep(1)
+        elif value == '24':
+            print(value)
+            ser.write('j'.encode())
+            time.sleep(1)
+        elif value == '25':
+            print(value)
+            ser.write('k'.encode())
+            time.sleep(1)
+        elif value == '26':
+            print(value)
+            ser.write('l'.encode())
+            time.sleep(1)
+        elif value == '31':
+            print(value)
+            ser.write('m'.encode())
+            time.sleep(1)
+        elif value == '32':
+            print(value)
+            ser.write('n'.encode())
+            time.sleep(1)
+        elif value == '33':
+            print(value)
+            ser.write('o'.encode())
+            time.sleep(1)
+        elif value == '34':
+            print(value)
+            ser.write('p'.encode())
+            time.sleep(1)
+        elif value == '35':
+            print(value)
+            ser.write('q'.encode())
+            time.sleep(1)
+        elif value == '36':
+            print(value)
+            ser.write('r'.encode())
+            time.sleep(1)
+        else:
+            print('bad command')    
+            
+
+
+    def set_func(self):
+        self.switch_func()
+        print('S')
+        ser.write('S'.encode())
+        time.sleep(1)
+        self.get_trace()
+
+    def get_trace(self):
+        out = '' 
+        currents = []
+        while ser.in_waiting > 0:  
+            out += str(ser.read(21))
+            #print(out)
+
+        if out == '':
+            print('No data')
+            return
+        else:
+            for s in range(len(out)): 
+                currents.append(4.0*ord(out[s])*(5.0/4095.0)/10.0)
+            #print(s)
+            #print(currents)
+
+            self.ax1f1.cla() # clear axis
+            self.ax1f1.plot(times, currents) 
+            self.ax1f1.set_xlabel('Time (ms)')
+            self.ax1f1.set_ylabel('Current (mA)')
+            self.ax1f1.set_title('Current Trace') 
+            self.canvas.draw()
+                
+
+    def reset_func(self):
+        self.switch_func()
+        print('R')
+        ser.write('R'.encode())
+        time.sleep(1)
+        self.get_trace()
+           
+     
+    # def addmpl(self, fig):
+    #     self.canvas = FigureCanvas(fig)
+    #     self.Graph.addWidget(self.canvas)
+    #     self.canvas.draw()
+
+
+ 
+if __name__ == '__main__':
+    import sys
+    from PyQt4 import QtGui
+    import numpy as np
+ 
+ 
+    app = QtGui.QApplication(sys.argv)
+    main = Main()
+    # main.addmpl(fig1)
+    main.show()
+    sys.exit(app.exec_())
